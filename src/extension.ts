@@ -1,27 +1,18 @@
-// The module 'vscode' contains the VS Code extensibility API
-// Import the module and reference it with the alias vscode in your code below
 import * as vscode from 'vscode';
-
-// this method is called when your extension is activated
-// your extension is activated the very first time the command is executed
+import { ActiveEditor } from './active_editor';
 export function activate(context: vscode.ExtensionContext) {
-
-	// Use the console to output diagnostic information (console.log) and errors (console.error)
-	// This line of code will only be executed once when your extension is activated
-	console.log('Congratulations, your extension "cpp-comment-generator" is now active!');
-
-	// The command has been defined in the package.json file
-	// Now provide the implementation of the command with registerCommand
-	// The commandId parameter must match the command field in package.json
-	let disposable = vscode.commands.registerCommand('cpp-comment-generator.helloWorld', () => {
-		// The code you place here will be executed every time your command is executed
-
-		// Display a message box to the user
-		vscode.window.showInformationMessage('Hello World from C++ Comment Generator!');
+	let write_comments = vscode.commands.registerCommand('cpp-comment-generator.writeComments', () => {
+		let editor = vscode.window.activeTextEditor;
+		if (!editor) { return; }
+		let active_editor: ActiveEditor = new ActiveEditor(editor);
+		if (active_editor.InvalidLanguage()) { return; }
+		if (!active_editor.WriteComments()) {
+			vscode.window.showInformationMessage('Comment generation failed!');
+		}
 	});
-
-	context.subscriptions.push(disposable);
+	context.subscriptions.push(write_comments);
 }
 
-// this method is called when your extension is deactivated
-export function deactivate() {}
+export function deactivate() {
+	vscode.window.showInformationMessage('Your extension "cpp-comment-generator" is now deactivated!');
+}

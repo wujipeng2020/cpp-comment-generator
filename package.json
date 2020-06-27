@@ -10,14 +10,14 @@
 		"Other"
 	],
 	"activationEvents": [
-		"onCommand:cpp-comment-generator.helloWorld"
+		"onCommand:cpp-comment-generator.writeComments"
 	],
 	"main": "./out/extension.js",
 	"contributes": {
 		"commands": [
 			{
-				"command": "cpp-comment-generator.helloWorld",
-				"title": "Hello World"
+				"command": "cpp-comment-generator.writeComments",
+				"title": "Write Comments"
 			}
 		]
 	},
