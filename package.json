@@ -1,7 +1,7 @@
 {
-	"name": "cpp-comment-generator",
+	"name": "cpp-comments-generator",
 	"publisher": "wujipeng",
-	"displayName": "C++ Comment Generator",
+	"displayName": "C++ Comments Generator",
 	"description": "generates doxygen-style C++ comments  ",
 	"version": "0.0.1",
 	"engines": {
@@ -11,18 +11,18 @@
 		"Other"
 	],
 	"activationEvents": [
-		"onCommand:cpp-comment-generator.writeComments",
-		"onCommand:cpp-comment-generator.configAuthor"
+		"onCommand:cpp_comments_generator.writeComments",
+		"onCommand:cpp_comments_generator.configAuthor"
 	],
 	"main": "./out/extension.js",
 	"contributes": {
 		"commands": [
 			{
-				"command": "cpp-comment-generator.writeComments",
+				"command": "cpp_comments_generator.writeComments",
 				"title": "Write Comments"
 			},
 			{
-				"command": "cpp-comment-generator.configAuthor",
+				"command": "cpp_comments_generator.configAuthor",
 				"title": "Configure Author"
 			}
 		]
@@ -35,13 +35,13 @@
 		"test": "node ./out/test/runTest.js"
 	},
 	"icon": "images/comment_icon.png",
-	"homepage": "https://github.com/wujipeng2020/cpp-comment-generator#readme",
+	"homepage": "https://github.com/wujipeng2020/cpp_comments_generator#readme",
 	"repository": {
 			"type": "git",
-			"url": "https://github.com/wujipeng2020/cpp-comment-generator"
+			"url": "https://github.com/wujipeng2020/cpp_comments_generator"
 	},
 	"bugs": {
-			"url": "https://github.com/wujipeng2020/cpp-comment-generator/issues"
+			"url": "https://github.com/wujipeng2020/cpp_comments_generator/issues"
 	},
 	"license": "MIT",
 	"devDependencies": {
