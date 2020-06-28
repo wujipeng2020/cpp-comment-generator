@@ -1,6 +1,4 @@
 import { TextEditor, Position, Selection, TextLine } from 'vscode';
-import { stat } from 'fs';
-import { SSL_OP_SSLEAY_080_CLIENT_DH_BUG } from 'constants';
 
 export class CppCommentGenerator {
   private author_: string;
@@ -40,10 +38,11 @@ export class CppCommentGenerator {
         let tmp = next_line.text.trim();
         s+=tmp;
         if(tmp.search(/[;{]/)!==-1){ // declaration ends
+          console.log("multi-line merged: " + s);
           break;
         }
       }
-      console.log("multi-line merged: " + s);
+      return false; 
     }
 
     let return_void = false;
