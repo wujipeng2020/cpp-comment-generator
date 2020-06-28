@@ -18,7 +18,7 @@ async function showInputBox(context: vscode.ExtensionContext) {
 
 export function activate(context: vscode.ExtensionContext) {
 	// generates comments for either class or function for the selected declaration
-	let write_comments = vscode.commands.registerCommand('cpp-comment-generator.writeComments', () => {
+	let write_comments = vscode.commands.registerCommand('cpp_comment_generator.writeComments', () => {
 		let editor = vscode.window.activeTextEditor;
 		if (!editor) { return; }
 		const author_name_env = context.environmentVariableCollection.get('author_name');
@@ -34,7 +34,7 @@ export function activate(context: vscode.ExtensionContext) {
 	});
 
 	// set author name so we can generate class comments with author info 
-	let config_author = vscode.commands.registerCommand('cpp-comment-generator.configAuthor', () => {
+	let config_author = vscode.commands.registerCommand('cpp_comment_generator.configAuthor', () => {
 		showInputBox(context);
 	});
 	context.subscriptions.push(write_comments);
@@ -43,5 +43,5 @@ export function activate(context: vscode.ExtensionContext) {
 
 
 export function deactivate() {
-	vscode.window.showInformationMessage('Your extension "cpp-comment-generator" is now deactivated!');
+	vscode.window.showInformationMessage('Your extension "cpp_comment_generator" is now deactivated!');
 }

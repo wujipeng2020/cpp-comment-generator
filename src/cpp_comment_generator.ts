@@ -48,7 +48,7 @@ export class CppCommentGenerator {
 
     let return_void = false;
     // skip static or extern, trim again 
-    s = s.replace(/static/g, '').replace(/extern/g, '').replace(/const/g, '').replace(/[\&\*]/g, '').trim();
+    s = s.replace(/static/g, '').replace(/extern/g, '').replace(/const/g, '').replace(/[\&\*]/g, ' ').trim();
     if (s.startsWith("void")) {
       return_void = true;
     }
