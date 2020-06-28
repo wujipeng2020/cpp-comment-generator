@@ -34,6 +34,16 @@
 		"pretest": "npm run compile && npm run lint",
 		"test": "node ./out/test/runTest.js"
 	},
+	"icon": "images/comment_icon.png",
+	"homepage": "https://github.com/wujipeng2020/cpp-comment-generator#readme",
+	"repository": {
+			"type": "git",
+			"url": "https://github.com/wujipeng2020/cpp-comment-generator"
+	},
+	"bugs": {
+			"url": "https://github.com/wujipeng2020/cpp-comment-generator/issues"
+	},
+	"license": "MIT",
 	"devDependencies": {
 		"@types/vscode": "^1.46.0",
 		"@types/glob": "^7.1.1",

@@ -30,29 +30,30 @@ export class CppCommentGenerator {
     } // otherwise, the selection should be either invalid or a func declaration
 
     // merge multiple lines if it's a multi-line declaration
-    const kMaxLinesToDetect = 30; 
-    if(s.search(/[;{]/) === -1){  // either multi-line or illegal 
+    const kMaxLinesToDetect = 30;
+    if (s.search(/[;{]/) === -1) {  // either multi-line or illegal 
       let next_line = cur_line;
-      for(let i = 0; i < kMaxLinesToDetect; i++){ 
-        next_line = this.GetLine(next_line.lineNumber+1);
-        let tmp = next_line.text.trim();
-        s+=tmp;
-        if(tmp.search(/[;{]/)!==-1){ // declaration ends
+      let i = 0;
+      for (; i < kMaxLinesToDetect; i++) {
+        next_line = this.GetLine(next_line.lineNumber + 1);
+        let tmp = next_line.text.trim().replace(/[\n]/, '');
+        s += tmp;
+        if (tmp.search(/[;{]/) !== -1) { // declaration ends
           console.log("multi-line merged: " + s);
           break;
         }
       }
-      return false; 
+      if (i === kMaxLinesToDetect) { return false; }
     }
 
     let return_void = false;
     // skip static or extern, trim again 
     s = s.replace(/static/g, '').replace(/extern/g, '').replace(/const/g, '').replace(/[\&\*]/g, '').trim();
-    if(s.startsWith("void")){
+    if (s.startsWith("void")) {
       return_void = true;
     }
-    const param_pos = s.search(/\(/) ;
-    if (param_pos === -1 ){
+    const param_pos = s.search(/\(/);
+    if (param_pos === -1) {
       return false;
     }
 
@@ -71,52 +72,52 @@ export class CppCommentGenerator {
     // static std::pair<int, int> VecA(vector<MatchedItem>& items, unordered_map<i16, u16>& cnt_map)
     const kInType = 0;
     const kBetweenTypeParam = 1;
-    const kInParam = 2 ;
+    const kInParam = 2;
     const kAfterParam = 3;
     const kAfterComma = 4;
     let status = kAfterComma;
     let nr_angle_brackets = 0; // number of '<'s 
-    if(s.length <= 1) {return false;} // sanity check
-    let parameters : string[] = []; 
-    let current_parameter : string = '';
-    for(let i = 0; i < s.length; i++){ // detect parameters
+    if (s.length <= 1) { return false; } // sanity check
+    let parameters: string[] = [];
+    let current_parameter: string = '';
+    for (let i = 0; i < s.length; i++) { // detect parameters
       const c = s[i];
-      if( c === '<' ){ // enter a template, should ignore commas now
-        nr_angle_brackets ++;
-      }else if(c === '>'){
-        nr_angle_brackets --;
+      if (c === '<') { // enter a template, should ignore commas now
+        nr_angle_brackets++;
+      } else if (c === '>') {
+        nr_angle_brackets--;
       }
-      if(nr_angle_brackets > 0) {continue;} // skip templates 
-      if(c === ' ' || c === '\t' || c === '\r' || c === '\v' || c==='\f'){ // whitespace
-        if(status === kInType){
+      if (nr_angle_brackets > 0) { continue; } // skip templates 
+      if (c === ' ' || c === '\t' || c === '\r' || c === '\v' || c === '\f') { // whitespace
+        if (status === kInType) {
           status = kBetweenTypeParam;
-        }else if (status === kInParam){
+        } else if (status === kInParam) {
           status = kAfterParam;
         } // otherwise status remains unchanged
-      }else if(c === ',' || c=== ';' || c==='{'){ // param ends
-        if(status===kAfterComma){
+      } else if (c === ',' || c === ';' || c === '{') { // param ends
+        if (status === kAfterComma) {
           return false; // sanity check 
-        }else{ // current parameter ends
+        } else { // current parameter ends
           parameters.push(current_parameter);
           status = kAfterComma;
           current_parameter = ''; // clear current parameter
         }
-        if(c ===';' || c ==='{') { break;} // declaration ends
-      }else{ // non-whitespace except ;,{
-        if(status === kBetweenTypeParam){
-          current_parameter += c; 
-          status = kInParam; 
-        }else if(status === kInParam){
+        if (c === ';' || c === '{') { break; } // declaration ends
+      } else { // non-whitespace except ;,{
+        if (status === kBetweenTypeParam) {
           current_parameter += c;
-        }else if(status === kAfterComma){
+          status = kInParam;
+        } else if (status === kInParam) {
+          current_parameter += c;
+        } else if (status === kAfterComma) {
           status = kInType;
         } // otherewise status & current_parameter remain unchanged
       }
     }
 
-    if(parameters.length > 0){ // remove the ) of last parameter	
-      parameters[parameters.length-1] = parameters[parameters.length-1].replace(/[\)\(]/g, '').replace(/[^a-zA-Z0-9_$]/g,'');
-    } 
+    if (parameters.length > 0) { // remove the ) of last parameter	
+      parameters[parameters.length - 1] = parameters[parameters.length - 1].replace(/[\)\(]/g, '').replace(/[^a-zA-Z0-9_$]/g, '');
+    }
     this.Insert(new Position(cur_line.lineNumber, 0), this.CommentDeclaration(offset, return_void, parameters));
     this.Move(cur_line.lineNumber + 1, offset + 10);
     return true;
@@ -153,7 +154,7 @@ export class CppCommentGenerator {
     s += '/**\n';
     gen_white_space(offset);
     s += ' * @brief \n';
-    for(let i = 0; i < parameters.length; i++){
+    for (let i = 0; i < parameters.length; i++) {
       gen_white_space(offset);
       s += ' * @param ';
       s += parameters[i];
@@ -161,8 +162,8 @@ export class CppCommentGenerator {
     }
     gen_white_space(offset);
     s += ' * @return ';
-    if(return_void){ s+='(void)';}
-    s+='\n';
+    if (return_void) { s += '(void)'; }
+    s += '\n';
     gen_white_space(offset);
     s += ' */\n';
     return s;
