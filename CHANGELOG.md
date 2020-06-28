@@ -17,5 +17,8 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 - Add vscodeignore
 - Update CHANGELOG.md 
 
-## [0.0.4]
-- 
+## [0.0.4-0.0.5]
+- Fix vscodeignore issue
+
+## [0.0.6]
+- Support template class and template functions

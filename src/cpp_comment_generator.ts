@@ -16,16 +16,21 @@ export class CppCommentGenerator {
   }
 
   public WriteComments(): boolean {
-    const cur_line = this.CurrentLine();
+    let cur_line = this.CurrentLine();
+    const selected_line = cur_line;
     if (cur_line.isEmptyOrWhitespace) { return false; }
     const offset = cur_line.firstNonWhitespaceCharacterIndex;
     console.log("cur line: " + cur_line.text);
     let s: string = cur_line.text.trim();
 
+    if(s.search(/template/g) !== -1){
+      cur_line = this.GetLine(cur_line.lineNumber + 1);
+      s = cur_line.text.trim(); // for tempalte functions or classes
+    }
 
     if (s.startsWith("class")) { // selection is a class delcaration
-      this.Insert(new Position(cur_line.lineNumber, 0), this.CommentClass(offset));
-      this.Move(cur_line.lineNumber + 1, offset + 10);
+      this.Insert(new Position(selected_line.lineNumber, 0), this.CommentClass(offset));
+      this.Move(selected_line.lineNumber + 1, offset + 10);
       return true;
     } // otherwise, the selection should be either invalid or a func declaration
 
@@ -118,8 +123,8 @@ export class CppCommentGenerator {
     if (parameters.length > 0) { // remove the ) of last parameter	
       parameters[parameters.length - 1] = parameters[parameters.length - 1].replace(/[\)\(]/g, '').replace(/[^a-zA-Z0-9_$]/g, '');
     }
-    this.Insert(new Position(cur_line.lineNumber, 0), this.CommentDeclaration(offset, return_void, parameters));
-    this.Move(cur_line.lineNumber + 1, offset + 10);
+    this.Insert(new Position(selected_line.lineNumber, 0), this.CommentDeclaration(offset, return_void, parameters));
+    this.Move(selected_line.lineNumber + 1, offset + 10);
     return true;
   }
 
