@@ -1,5 +1,6 @@
 {
 	"name": "cpp-comment-generator",
+	"publisher": "wujipeng",
 	"displayName": "C++ Comment Generator",
 	"description": "generates doxygen-style C++ comments  ",
 	"version": "0.0.1",
@@ -25,8 +26,7 @@
 				"title": "Configure Author"
 			}
 		]
-	},
-	"scripts": {
+	}, "scripts": {
 		"vscode:prepublish": "npm run compile",
 		"compile": "tsc -p ./",
 		"lint": "eslint src --ext ts",
