@@ -78,6 +78,17 @@ export class CppCommentGenerator {
       return false;
     }
 
+    // handle special case: constructors
+    let is_constructor = false;
+    if(s.search(/\) *:.*[{;]/g) !== -1){
+      is_constructor = true;
+      s = s.replace(/\) *:.*[{;]/g, ');'); 
+    }
+    
+    if(s.substring(0, param_pos).search(/[ \f\v\r\t]/g) === -1){
+      is_constructor = true; // for example A::A()
+    }
+
     s = s.substring(param_pos + 1);
     console.log("after preprocessing: " + s);
     // paralist walk start from the first (, and stops at the first ; or {.
@@ -109,7 +120,7 @@ export class CppCommentGenerator {
         if(expecting_end){ // expects whitespace and a ; or {
           if(c===';' || c==='{'){
             // no param
-            this.Insert(new Position(selected_line.lineNumber, 0), this.CommentDeclaration(offset, return_void, []));
+            this.Insert(new Position(selected_line.lineNumber, 0), this.CommentDeclaration(offset, return_void, [], is_constructor));
             this.Move(selected_line.lineNumber + 1, offset + 10);
             return true;
           }else{
@@ -164,7 +175,7 @@ export class CppCommentGenerator {
     if (parameters.length > 0) { // remove the ) of last parameter	
       parameters[parameters.length - 1] = parameters[parameters.length - 1].replace(/[\)\(]/g, '').replace(/[^a-zA-Z0-9_$]/g, '');
     }
-    this.Insert(new Position(selected_line.lineNumber, 0), this.CommentDeclaration(offset, return_void, parameters));
+    this.Insert(new Position(selected_line.lineNumber, 0), this.CommentDeclaration(offset, return_void, parameters, is_constructor));
     this.Move(selected_line.lineNumber + 1, offset + 10);
     return true;
   }
@@ -189,7 +200,7 @@ export class CppCommentGenerator {
     s += ' */\n';
     return s;
   }
-  private CommentDeclaration(offset: number, return_void: boolean, parameters: string[]): string {
+  private CommentDeclaration(offset: number, return_void: boolean, parameters: string[], is_constructor : boolean): string {
     let s: string = '';
     let gen_white_space = ((nr_off: number) => {
       for (let i = 0; i < nr_off; i++) {
@@ -206,10 +217,12 @@ export class CppCommentGenerator {
       s += parameters[i];
       s += '\n';
     }
-    gen_white_space(offset);
-    s += ' * @return ';
-    if (return_void) { s += '(void)'; }
-    s += '\n';
+    if(!is_constructor){
+      gen_white_space(offset);
+      s += ' * @return ';
+      if (return_void) { s += '(void)'; }
+      s += '\n';
+    }
     gen_white_space(offset);
     s += ' */\n';
     return s;
