@@ -23,12 +23,28 @@ export class CppCommentGenerator {
     console.log("cur line: " + cur_line.text);
     let s: string = cur_line.text.trim();
 
-    if(s.search(/template/g) !== -1){
-      cur_line = this.GetLine(cur_line.lineNumber + 1);
-      s = cur_line.text.trim(); // for tempalte functions or classes
+    const template_pos = s.search(/template/g);
+    let is_template_class = false;
+    if(template_pos !== -1){ // is template declaration
+      s = s.replace(/template *<.*>/g, ''); // remove template delarations
+      console.log("after removing template declaration: " + s);
+      if(s.search(/class/g) !== -1 || s.search(/struct/g) !== -1) {
+        is_template_class = true;
+      }else{ // otherwise, it should be a tempate func
+        if(s.search(/\(/) === -1){ // goto next line if not a one-line template func 
+          cur_line = this.GetLine(cur_line.lineNumber + 1);
+          s = cur_line.text.trim(); // for tempalte functions or classes
+        }
+      }
     }
 
-    if (s.startsWith("class")) { // selection is a class delcaration
+    let s_is_class = (() => {
+      if(is_template_class) {return true;}
+      if(s.startsWith('class') || s.startsWith('struct')){ return true; }
+      return false;
+    });
+
+    if (s_is_class()) { // selection is a class/struct delcaration
       this.Insert(new Position(selected_line.lineNumber, 0), this.CommentClass(offset));
       this.Move(selected_line.lineNumber + 1, offset + 10);
       return true;

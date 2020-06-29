@@ -22,3 +22,7 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 ## [0.0.6]
 - Support template class and template functions
+
+## [0.0.7]
+- Support one-line templates
+
