@@ -99,6 +99,31 @@ export class CppCommentGenerator {
     let status = kAfterComma;
     let nr_angle_brackets = 0; // number of '<'s 
     if (s.length <= 1) { return false; } // sanity check
+    // handle special case: no parameter 
+    let expecting_end = false;
+    for(let i = 0 ; i < s.length; i++){
+      const c = s[i];
+      if(c ===' ' || c==='\t' || c=== '\r' || c==='\f' || c==='\v'){
+        continue;
+      }else{ // non-whitespace
+        if(expecting_end){ // expects whitespace and a ; or {
+          if(c===';' || c==='{'){
+            // no param
+            this.Insert(new Position(selected_line.lineNumber, 0), this.CommentDeclaration(offset, return_void, []));
+            this.Move(selected_line.lineNumber + 1, offset + 10);
+            return true;
+          }else{
+            break; 
+          }
+        }else{ // expects whitespace or a )
+          if (c===')'){
+            expecting_end = true;
+          }else{
+            break;
+          }
+        }
+      }
+    }
     let parameters: string[] = [];
     let current_parameter: string = '';
     for (let i = 0; i < s.length; i++) { // detect parameters

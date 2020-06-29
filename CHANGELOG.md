@@ -26,3 +26,5 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 ## [0.0.7]
 - Support one-line templates
 
+## [0.0.8]
+- No longer add param line when there is no param in the function 
